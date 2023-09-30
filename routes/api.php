@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function(){
     Route::get('/', [VideoController::class,'index'])->name('v1.index');
     Route::post('/', [VideoController::class,'store'])->name('v1.store');
-    Route::get('{id}', [VideoController::class, 'show'])->name('v1.show');
+    Route::get('/{id}', [VideoController::class, 'show'])->name('v1.show');
     //Route::post('/organization/staff/signup', [OrganizationController::class, 'createOrganizationUser']);
 });
 
