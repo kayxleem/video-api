@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Video;
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use Symfony\Component\HttpFoundation\Response;
