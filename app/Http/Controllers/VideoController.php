@@ -56,9 +56,9 @@ class VideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Video $video)
+    public function show($id)
     {
-        $video = video::find($video);
+        $video = video::find($id);
         if (!$video) {
             return response()->json(['status_code' => Response::HTTP_NOT_FOUND, 'status' => 'error', 'message' => 'video does not exist']);
         } else {
