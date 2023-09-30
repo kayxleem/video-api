@@ -18,7 +18,7 @@ class VideoController extends Controller
 
         $video = Video::all();
         if ($video->count() > 0) {
-            return response()->json($video);
+            return response()->json(['status_code' => Response::HTTP_OK, 'status' => 'success', 'data' => $video]);
         } else {
             return response()->json(['status_code' => Response::HTTP_NOT_FOUND, 'status' => 'success', 'message' => 'No video found']);
         }
@@ -50,7 +50,7 @@ class VideoController extends Controller
             'description' => $request->description ?? null,
             'url' => isset($image) ? $image : '',
         ]);
-        return response()->json($video, Response::HTTP_CREATED);
+        return response()->json(['status_code' => Response::HTTP_CREATED, 'status' => 'success', 'data' => $video]);
     }
 
     /**
@@ -62,7 +62,7 @@ class VideoController extends Controller
         if (!$video) {
             return response()->json(['status_code' => Response::HTTP_NOT_FOUND, 'status' => 'error', 'message' => 'video does not exist']);
         } else {
-            return response()->json($video, Response::HTTP_OK);
+            return response()->json(['status_code' => Response::HTTP_OK, 'status' => 'success', 'data' => $video], Response::HTTP_OK);
         }
     }
 
