@@ -49,7 +49,7 @@ class VideoController extends Controller
         $video = Video::create([
             'title' => $request->title,
             'description' => $request->description ?? null,
-            'url' => isset($image) ? $image : '',
+            'url' => isset($videourl) ? $videourl : '',
         ]);
 
 
