@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,17 +40,43 @@ class VideoController extends Controller
     {
 
         if ($request->has('video')) {
-            $image = $request->file('video');
+            $videoupload = $request->file('video');
             $filename = time() . '.' . $request->video->extension();
-            $image->move(public_path('uploads'), $filename);
+            $videoupload->move(public_path('uploads'), $filename);
 
-            $image = config('app.url').'/uploads/'.$filename;
+            $videourl = config('app.url').'/uploads/'.$filename;
         }
         $video = Video::create([
             'title' => $request->title,
             'description' => $request->description ?? null,
             'url' => isset($image) ? $image : '',
         ]);
+
+
+        $videostream = fopen($videourl, 'r');
+
+        $apiURL = 'https://transcribe.whisperapi.com';
+        $headers = [
+            'Authorization' => 'Bearer '.config('app.whisperapi')
+        ];
+
+        $response = Http::withHeaders($headers)->attach('file',$videostream)->post($apiURL, [
+            'diarization' => "false",
+            'fileType' => 'mp4',
+            'task' => 'transcribe'
+        ]);
+
+        $data= $response->json();
+
+        $video->update([
+            'payload' => $response->json(),
+            'transcript' => $data['text'],
+            //'segments' => $data['segments'],
+            //'language'  => $data['language'],
+        ]);
+
+
+
         return response()->json(['status_code' => Response::HTTP_CREATED, 'status' => 'success', 'data' => $video]);
     }
 
@@ -59,6 +86,9 @@ class VideoController extends Controller
     public function show($id)
     {
         $video = video::find($id);
+
+        //$video->update(['segments'=> $video->payload['segments']]);
+        //return response()->json($video->payload['segments']);
         if (!$video) {
             return response()->json(['status_code' => Response::HTTP_NOT_FOUND, 'status' => 'error', 'message' => 'video does not exist']);
         } else {
@@ -89,4 +119,6 @@ class VideoController extends Controller
     {
         //
     }
+
+
 }
